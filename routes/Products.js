@@ -12,12 +12,14 @@ const path = require('path')
 const fs = require('fs')
 const multer = require('multer')
 const e = require('express')
+const {validateToken} = require('../middlewares/AuthMiddleware')
 
 // router.get('/products', getProducts)
 router.get('/products', async (req, res) => {
     const product = await Products.findAll()
     res.json(product)
 })
+
 router.get('/products/:id', async (req, res) => {
     try {
         const response = await Products.findOne({
@@ -30,6 +32,36 @@ router.get('/products/:id', async (req, res) => {
         console.log(error.message)
     }
 })
+
+// add to Cart
+router.post("/add/:id", validateToken, async (req, res) => {
+    const ProductId= req.params.productId
+    const userId= req.user.userId
+    const titleParfum= req.body.titleParfum
+    const urlParfum= req.body.urlParfum
+    const sumParfum= req.body.sumParfum
+    const priceParfum= req.body.priceParfum
+
+    db.query('INSERT INTO carts (productId, userId, titleParfum, urlParfum, sumParfum, priceParfum) VALUES (?,?,?,?,?,?)', 
+    [ProductId, userId, titleParfum, urlParfum, sumParfum, priceParfum], 
+    (err, result) => {
+        if (err) 
+            console.log(err);
+
+        console.log(result);
+    });
+
+    // const {userId, titleParfum, urlParfum, sumParfum, priceParfum} = req.body
+    // bcrypt.hash(password, 10).then((hash) => {
+    //     Users.create({
+    //         username: username,
+    //         email: email,
+    //         password: hash,
+    //     })
+    //     res.json("Success")
+    // })
+})
+
 router.post('/', async (req, res) => {
         if(req.files === null){
             return res.status(400).json({msg: "No File Uploaded"})
