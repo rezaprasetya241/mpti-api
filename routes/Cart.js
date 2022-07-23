@@ -29,8 +29,12 @@ router.post("/:id", validateToken, async(req, res) => {
     // res.json(Found.urlPic)
     // con
 })
-router.get("/", async(req, res) => {
-    
+router.get("/", validateToken, async(req, res) => {
+    const UserId = req.user.id
+    const cart = await Cart.findAll({
+        where: {UserId: UserId}
+    })
+    res.json(cart)
 })
 
 module.exports = router

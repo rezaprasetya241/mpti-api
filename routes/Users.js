@@ -37,7 +37,10 @@ router.post("/login", async (req, res) => {
         })
     }
 })
-
+router.get('/', async(req, res) => {
+    const user = await Users.findAll()
+    res.json(user)
+})
 router.get('/auth', validateToken, (req, res) => {
     res.json(req.user)
   })
